@@ -22,16 +22,17 @@ L'application requiert les éléments suivants pour fonctionner correctement :
 2. **Tableau de prédictions** : Résultats de la classification SVM, indiquant le sexe prédit pour chaque échantillon basé sur les niveaux d'expression des gènes.
 
 ## Instructions d'utilisation
-1. **Télécharger les dépendances** : Installez les bibliothèques R requises (`dplyr`, `tidyr`, `ggplot2`, `ggpubr`, `shiny`, `shinythemes`, `e1071`, `DT`).
-2. **Lancer l'application** :
+1. **Choisir le format de
+2. **Télécharger les dépendances** : Installez les bibliothèques R requises (`dplyr`, `tidyr`, `ggplot2`, `ggpubr`, `shiny`, `shinythemes`, `e1071`, `DT`).
+3. **Lancer l'application** :
    - Exécutez le script dans un environnement R avec le package Shiny.
-3. **Télécharger vos données** :
+4. **Télécharger vos données** :
    - Utilisez le champ de téléversement pour charger un fichier CSV contenant les niveaux d'expression pour `REM16` et `FT1`.
    - Spécifiez les identifiants de gènes si différents des valeurs par défaut.
-4. **Analyser les données** :
+5. **Analyser les données** :
    - Cliquez sur "Analyser" pour afficher les boxplots et comparer vos échantillons avec les données de référence.
    - Sélectionnez un graphique spécifique (REM16, FT1, ou les deux) pour une visualisation personnalisée.
-5. **Interpréter les résultats** :
+6. **Interpréter les résultats** :
    - Consultez les prédictions de sexe dans l'onglet "Tableau des résultats". Les échantillons sont identifiés par leur sexe basé sur les niveaux d'expression de `REM16` et `FT1`.
 
 ## Notes supplémentaires
