@@ -23,11 +23,17 @@ L'application requiert les éléments suivants pour fonctionner correctement :
 ### Résultats
 1. **Graphiques d'expression génique** : Boxplots interactifs pour les gènes `REM16` et `FT1`, permettant de visualiser les niveaux d'expression des échantillons comparés aux données de référence.
    a. L'expression du gène REM16 du génotype sélectionné (en noir) comparé aux boxplotx des données de référence.
+   
    ![Texte alternatif de l'image](images/rem16.png)
+   
    b. L'expression du gène FT1 du génotype sélectionné (en noir) comparé aux boxplotx des données de référence.
-   ft1.png
+   
+   ![Texte alternatif de l'image](images/ft1.png)
+   
    c. L'expression des gènes REM16 et FT1 du génotype sélectionné (en noir) comparé aux boxplotx des données de référence coloré en fonction du gène.
-   rem16+ft1.png
+
+    ![Texte alternatif de l'image](images/rem16=ft1.png)
+
 3. **Tableau de prédictions** : Résultats de la classification SVM, indiquant le sexe prédit pour chaque échantillon basé sur les niveaux d'expression des gènes.
 
 ### Instructions d'utilisation
