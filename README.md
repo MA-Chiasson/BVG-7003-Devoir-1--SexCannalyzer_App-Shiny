@@ -42,7 +42,7 @@ L'application requiert les éléments suivants pour fonctionner correctement :
        ![Texte alternatif de l'image](images/etape1.png)
 
 4. **Observation des données**
-   - Sélectionnez le génotype à étudier (la première colonne par défaut). Vous pouvez sélectionner à partir de la liste déroulante ou simplement faire la recherche en entrant le nom de la colonne(génotype) suivit de la sélection du bouton chercher. La fonction recherche va dominer et actualiser la sélection par la liste. Si le nom sélectionné n'est pas dans la liste des noms des colonnes, un message d'erreur apparaîtra et annulera la recherche.
+   - Sélectionnez le génotype à étudier (la première colonne par défaut). Vous pouvez sélectionner à partir de la liste déroulante ou simplement faire la recherche en entrant le nom de la colonne (génotype) suivit de la sélection du bouton chercher. La fonction recherche va dominer et actualiser la sélection par la liste. Si le nom sélectionné n'est pas dans la liste des noms des colonnes, un message d'erreur apparaîtra et annulera la recherche.
    - Sélectionnez un graphique spécifique (REM1, FT1, ou les deux) pour une visualisation personnalisée.
        ![Texte alternatif de l'image](images/etape2.png)
        ![Texte alternatif de l'image](images/etape3.png)
