@@ -14,34 +14,44 @@ options(shiny.maxRequestSize = 50*1024^2)  # Limite à 50 Mo
 
 # Charger les données de référence RNASeq et le modèle SVM pré-entraîné
 ref_data <- readRDS("data/2_Data_RNASeq_Cannabis_Sex.rds")  # Données d'expression génique
-svm_model <- readRDS("modele/svm_model.RDS")  # Modèle SVM pour prédire le sexe des plantes
+svm_model <- readRDS("modele/svm_model.rds")  # Modèle SVM pour prédire le sexe des plantes
 
 
 
 # Fonction pour préparer et transformer les données de référence
 prepare_reference_data <- function(data) {
-  # Renommer les identifiants de gènes pour les rendre plus compréhensibles
-  data$X <- gsub("LOC115699937", "REM16", data$X)
-  data$X <- gsub("LOC115696989", "FT1", data$X)
+  # Fonction helper pour transformer les données d'un gène
+  transform_gene_data <- function(data, gene_name) {
+    gene_data <- data %>% 
+      filter(X == gene_name) %>% 
+      select(-X) %>%
+      t() %>%
+      as.data.frame()
+    
+    colnames(gene_data) <- "expression"
+    gene_data$sample <- rownames(gene_data)
+    gene_data$sex <- substr(gene_data$sample, nchar(gene_data$sample) - 1, nchar(gene_data$sample))
+    gene_data$gene <- gene_name
+    return(gene_data)
+  }
   
-  # Extraction et transformation des données d'expression pour chaque gène en format long
-  gene1_data <- data %>% filter(X == "REM16") %>% select(-X)
-  gene1_long <- data.frame(t(gene1_data))
-  colnames(gene1_long) <- "expression"
-  gene1_long$sample <- rownames(gene1_long)
-  gene1_long$sex <- substr(gene1_long$sample, nchar(gene1_long$sample) - 1, nchar(gene1_long$sample))
-  gene1_long$gene <- "REM16"
+  # Renommer les identifiants de gènes
+  data$X <- case_when(
+    data$X == "LOC115699937" ~ "REM16",
+    data$X == "LOC115696989" ~ "FT1",
+    TRUE ~ data$X
+  )
   
-  gene2_data <- data %>% filter(X == "FT1") %>% select(-X)
-  gene2_long <- data.frame(t(gene2_data))
-  colnames(gene2_long) <- "expression"
-  gene2_long$sample <- rownames(gene2_long)
-  gene2_long$sex <- substr(gene2_long$sample, nchar(gene2_long$sample) - 1, nchar(gene2_long$sample))
-  gene2_long$gene <- "FT1"
+  # Transformer les données pour chaque gène
+  gene1_long <- transform_gene_data(data, "REM16")
+  gene2_long <- transform_gene_data(data, "FT1")
   
-  # Combiner les données des deux gènes dans une seule liste pour un accès simplifié
-  combined_data <- bind_rows(gene1_long, gene2_long)
-  list(rem16 = gene1_long, ft1 = gene2_long, combined = combined_data)
+  # Retourner la liste des données transformées
+  list(
+    rem16 = gene1_long,
+    ft1 = gene2_long,
+    combined = bind_rows(gene1_long, gene2_long)
+  )
 }
 
 # Préparer les données de référence à l'avance
@@ -167,95 +177,80 @@ server <- function(input, output, session) {
     }
   })
   
-  # Générer le graphique d'expression génique en fonction du choix de l'utilisateur
-  output$expressionPlot <- renderPlot({
-    # Vérifier que les données utilisateur et la colonne sélectionnée sont disponibles
-    req(user_data(), selected_column())
-    user_column <- selected_column()
+  # Fonction pour créer un graphique unique
+  create_single_gene_plot <- function(gene_data, user_data, user_column, gene_name) {
+    user_gene <- user_data %>% 
+      filter(X == gene_name) %>% 
+      pull(user_column) %>% 
+      as.numeric()
     
-    # Choix du graphique en fonction de l'option sélectionnée par l'utilisateur
-    if (input$graph_choice == "REM16") {
-      # Graphique pour le gène REM16
-      user_rem16 <- user_data() %>% filter(X == "REM16")  # Filtrer les données pour le gène REM16
-      user_expression_rem16 <- as.numeric(user_rem16[[user_column]])  # Extraire les valeurs d'expression pour la colonne sélectionnée
-      
-      # Génération du graphique pour REM16
-      ggplot(ref_data_list$rem16, aes(x = sex, y = expression, color = sex)) +
-        geom_boxplot(outlier.shape = NA) +  # Ajouter un boxplot sans les points atypiques
-        labs(
-          title = paste("Expression du gène REM16 chez ", user_column, "et données de référence"),
-          x = "Individu",
-          y = "Niveau d'expression"
-        ) +
-        theme_minimal() +
-        theme(
-          legend.position = "none",
-          plot.title = element_text(size = 16, hjust = 0.5, face = "bold"),
-          axis.title = element_text(size = 14),
-          axis.text = element_text(size = 12)
-        ) +
-        scale_x_discrete(labels = c(user_column, "Ref. XX", "Ref. XY")) +
-        geom_point(aes(x = user_column, y = user_expression_rem16), color = "black", size = 3)  # Point utilisateur en noir
-      
-    } else if (input$graph_choice == "FT1") {
-      # Graphique pour le gène FT1
-      user_ft1 <- user_data() %>% filter(X == "FT1")  # Filtrer les données pour le gène FT1
-      user_expression_ft1 <- as.numeric(user_ft1[[user_column]])  # Extraire les valeurs d'expression pour la colonne sélectionnée
-      
-      # Génération du graphique pour FT1
-      ggplot(ref_data_list$ft1, aes(x = sex, y = expression, color = sex)) +
-        geom_boxplot(outlier.shape = NA) +
-        labs(
-          title = paste("Expression du gène FT1 chez ", user_column, "et données de référence"),
-          x = "Individu",
-          y = "Niveau d'expression"
-        ) +
-        theme_minimal() +
-        theme(
-          legend.position = "none",
-          plot.title = element_text(size = 16, hjust = 0.5, face = "bold"),
-          axis.title = element_text(size = 14),
-          axis.text = element_text(size = 12)
-        ) +
-        scale_x_discrete(labels = c(user_column, "Ref. XX", "Ref. XY")) +
-        geom_point(aes(x = user_column, y = user_expression_ft1), color = "black", size = 3)  # Point utilisateur en noir
-    } else {
-      # Graphique combiné pour les gènes REM16 et FT1
-      combined_data <- ref_data_list$combined  # Récupérer les données combinées pour REM16 et FT1
-      user_rem16 <- user_data() %>% filter(X == "REM16")  # Filtrer les données pour REM16
-      user_ft1 <- user_data() %>% filter(X == "FT1")  # Filtrer les données pour FT1
-      
-      # Combiner les données utilisateur pour les deux gènes en un seul dataframe avec des étiquettes distinctes
-      user_data_combined <- data.frame(
-        sex_gene = c("Individu.REM16", "Individu.FT1"),  # REM16 avant FT1
-        expression = c(as.numeric(user_rem16[[user_column]]), as.numeric(user_ft1[[user_column]])),
-        gene = c("REM16", "FT1")
-      )
-      
-      # Forcer l'ordre des niveaux avec REM16 avant FT1
-      combined_data$sex_gene <- factor(
-        interaction(combined_data$sex, combined_data$gene),
-        levels = c("Individu.REM16", "Individu.FT1", "XX.REM16", "XY.REM16", "XX.FT1", "XY.FT1")
-      )
-      user_data_combined$sex_gene <- factor(
-        user_data_combined$sex_gene,
-        levels = c("Individu.REM16", "Individu.FT1", "XX.REM16", "XY.REM16", "XX.FT1", "XY.FT1")
-      )
-      
-      # Labels personnalisés pour chaque catégorie, avec le vrai nom de colonne pour l'individu étudié
-      x_labels <- c(user_column, user_column, "Ref.XX", "Ref.XY", "Ref.XX", "Ref.XY")
-      
-      # Génération du graphique combiné pour REM16 et FT1
-      ggplot(combined_data, aes(x = sex_gene, y = expression, color = gene)) +
-        geom_boxplot(outlier.shape = NA) +  # Ajouter un boxplot sans les points atypiques
-        labs(title = "Niveau d'expression des gènes REM16 et FT1 en fonction du sexe", x = "Individu", y = "Niveau d'expression") +
-        theme_minimal() +
-        theme(plot.title = element_text(size = 16, hjust = 0.5, face = "bold"),
-              axis.title = element_text(size = 14),
-              axis.text = element_text(size = 12)) +  # Appliquer un thème minimal pour une meilleure lisibilité
-        geom_point(data = user_data_combined, aes(x = sex_gene, y = expression, color = gene), size = 3) +  # Ajouter les points utilisateur pour chaque gène avec la couleur appropriée
-        scale_x_discrete(limits = levels(user_data_combined$sex_gene), labels = x_labels)  # Utiliser limits pour forcer l'ordre avec le vrai nom de colonne
-    }
+    ggplot(gene_data, aes(x = sex, y = expression, color = sex)) +
+      geom_boxplot(outlier.shape = NA) +
+      labs(
+        title = sprintf("Expression du gène %s chez %s et données de référence", gene_name, user_column),
+        x = "Individu",
+        y = "Niveau d'expression"
+      ) +
+      theme_minimal() +
+      theme(
+        legend.position = "none",
+        plot.title = element_text(size = 16, hjust = 0.5, face = "bold"),
+        axis.title = element_text(size = 14),
+        axis.text = element_text(size = 12)
+      ) +
+      scale_x_discrete(labels = c(user_column, "Ref. XX", "Ref. XY")) +
+      geom_point(aes(x = user_column, y = user_gene), color = "black", size = 3)
+  }
+  
+  # Amélioration du rendu du graphique
+  output$expressionPlot <- renderPlot({
+    req(user_data(), selected_column())
+    
+    switch(input$graph_choice,
+           "REM16" = create_single_gene_plot(ref_data_list$rem16, user_data(), selected_column(), "REM16"),
+           "FT1" = create_single_gene_plot(ref_data_list$ft1, user_data(), selected_column(), "FT1"),
+           "REM16+FT1" = {
+             # Graphique combiné pour les gènes REM16 et FT1
+             combined_data <- ref_data_list$combined
+             user_rem16 <- user_data() %>% filter(X == "REM16")
+             user_ft1 <- user_data() %>% filter(X == "FT1")
+             
+             # Préparer les données utilisateur
+             user_data_combined <- data.frame(
+               sex_gene = c("Individu.REM16", "Individu.FT1"),
+               expression = c(
+                 as.numeric(user_rem16[[selected_column()]]),
+                 as.numeric(user_ft1[[selected_column()]])
+               ),
+               gene = c("REM16", "FT1")
+             )
+             
+             # Définir les niveaux des facteurs
+             combined_data$sex_gene <- factor(
+               interaction(combined_data$sex, combined_data$gene),
+               levels = c("Individu.REM16", "Individu.FT1", "XX.REM16", "XY.REM16", "XX.FT1", "XY.FT1")
+             )
+             
+             user_data_combined$sex_gene <- factor(
+               user_data_combined$sex_gene,
+               levels = c("Individu.REM16", "Individu.FT1", "XX.REM16", "XY.REM16", "XX.FT1", "XY.FT1")
+             )
+             
+             # Définir les labels
+             x_labels <- c(selected_column(), selected_column(), "Ref.XX", "Ref.XY", "Ref.XX", "Ref.XY")
+             
+             # Créer le graphique
+             ggplot(combined_data, aes(x = sex_gene, y = expression, color = gene)) +
+               geom_boxplot(outlier.shape = NA) +
+               labs(title = "Niveau d'expression des gènes REM16 et FT1 en fonction du sexe", x = "Individu", y = "Niveau d'expression") +
+               theme_minimal() +
+               theme(plot.title = element_text(size = 16, hjust = 0.5, face = "bold"),
+                     axis.title = element_text(size = 14),
+                     axis.text = element_text(size = 12)) +
+               geom_point(data = user_data_combined, aes(x = sex_gene, y = expression, color = gene), size = 3) +
+               scale_x_discrete(limits = levels(user_data_combined$sex_gene), labels = x_labels)
+           }
+    )
   })
   
   
@@ -288,7 +283,7 @@ server <- function(input, output, session) {
     prediction_data %>% select(Sample, Sexe)
   })
 }
-  
+
 
 
 # Lancer l'application Shiny
