@@ -1,4 +1,3 @@
-getwd()
 # Charger les bibliothèques nécessaires
 library(dplyr)        # Manipulation de données
 library(tidyr)        # Manipulation de données
