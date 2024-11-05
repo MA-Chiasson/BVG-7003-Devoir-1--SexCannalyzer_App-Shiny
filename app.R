@@ -14,7 +14,7 @@ options(shiny.maxRequestSize = 50*1024^2)  # Limite à 50 Mo
 
 # Charger les données de référence RNASeq et le modèle SVM pré-entraîné
 ref_data <- readRDS("data/2_Data_RNASeq_Cannabis_Sex.rds")  # Données d'expression génique
-svm_model <- readRDS("model/svm_model.RDS")  # Modèle SVM pour prédire le sexe des plantes
+svm_model <- readRDS("modele/svm_model.RDS")  # Modèle SVM pour prédire le sexe des plantes
 
 
 
