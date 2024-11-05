@@ -1,4 +1,4 @@
-
+getwd()
 # Charger les bibliothèques nécessaires
 library(dplyr)        # Manipulation de données
 library(tidyr)        # Manipulation de données
@@ -49,18 +49,10 @@ prepare_reference_data <- function(data) {
 ref_data_list <- prepare_reference_data(ref_data)
 
 
-# Interface utilisateur de l'application Shiny
 ui <- navbarPage(
-  # Titre de l'application affiché en haut, avec un style personnalisé pour une meilleure visibilité
-  title = div(
-    "SexCannalyzer",
-    style = "font-size: 20px; font-weight: bold; color = #333;"
-  ),
-  # Thème Shiny pour styliser l'interface de manière uniforme
-  theme = shinytheme("lumen"),
-  
-  # Code JavaScript pour modifier le texte "Upload complete" en "Téléchargement terminé"
+  # Ajoutez le lien Font Awesome, le JavaScript et le CSS personnalisé
   tags$head(
+    tags$link(rel = "stylesheet", href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"),
     tags$script(HTML("
       $(document).on('shiny:inputchanged', function(event) {
         if (event.name === 'user_data') {
@@ -69,60 +61,61 @@ ui <- navbarPage(
           }, 10);
         }
       });
+    ")),
+    tags$style(HTML("
+      /* Style pour les onglets non sélectionnés */
+      .navbar-nav > li > a {
+        color: #666666 !important;  /* Gris clair pour les onglets non sélectionnés */
+        font-weight: normal !important;
+      }
+      
+      /* Style pour l'onglet sélectionné */
+      .navbar-nav > li.active > a {
+        color: #333333 !important;  /* Plus foncé pour l'onglet sélectionné */
+        font-weight: bold !important;
+      }
     "))
   ),
   
-  # Onglet pour visualiser les graphiques
-  tabPanel("Graphiques des résultats",
-           # Utilisation de sidebarLayout pour diviser l'interface en deux sections : barre latérale et panneau principal
-           sidebarLayout(
-             # Barre latérale contenant les contrôles d'entrée pour l'utilisateur
-             sidebarPanel(
-               # Champ pour téléverser un fichier CSV contenant les données de l'utilisateur
-               fileInput("user_data", "Télécharger un fichier CSV pour les individus à analyser", accept = ".csv", 
-                         buttonLabel = "Parcourir", placeholder = "Aucun fichier sélectionné"),
-               
-               # Champs texte pour que l'utilisateur saisisse les identifiants des gènes (FT1 en premier maintenant)
-               textInput("user_gene1_id", "ID du gène pour REM16", value = "LOC115699937"),
-               textInput("user_gene2_id", "ID du gène pour FT1", value = "LOC115696989"),
-               
-               # Bouton pour lancer l'analyse des données téléversées
-               actionButton("analyze", "Analyser"),
-               
-               # Ligne horizontale pour séparer visuellement les sections de la barre latérale
-               hr(),
-               
-               # Menu déroulant pour sélectionner une colonne de données spécifique pour l'analyse
-               selectInput("column_selector", "Sélectionner un individu (colonne) :", choices = NULL),
-               
-               # Champ texte pour permettre la recherche d'une colonne par nom
-               textInput("search_column", "Ou entrer un nom d'individu (colonne) :"),
-               
-               # Bouton pour déclencher la recherche d'individu
-               actionButton("search_column_button", "Chercher"),
-               
-               width = 3  # Ajustement de la largeur de la barre latérale
-             ),
-             
-             # Panneau principal pour afficher les résultats graphiques
-             mainPanel(
-               # Ligne contenant un menu déroulant pour choisir le type de graphique
-               fluidRow(
-                 # Menu déroulant aligné à droite (colonne 3, avec un décalage de 9 colonnes) pour choisir quel graphique afficher
-                 column(3, offset = 9, selectInput("graph_choice", "Choisir le graphique :", choices = c("REM16", "FT1", "REM16+FT1"), selected = "REM16"))
-               ),
-               # Zone d'affichage pour le graphique généré, avec une taille de 600px pour une meilleure visibilité
-               plotOutput("expressionPlot", height = "600px")
-             )
-           )
+  title = div(
+    "SexCannalyzer",
+    style = "font-size: 20px; font-weight: bold; color: #333;"
+  ),
+  theme = shinytheme("lumen"),
+  
+  # Onglet pour visualiser les graphiques avec icône de graphique
+  tabPanel(
+    HTML("<i class='fas fa-chart-line'></i> Graphiques des résultats"),
+    sidebarLayout(
+      sidebarPanel(
+        fileInput("user_data", "Télécharger un fichier CSV pour les individus à analyser", accept = ".csv", 
+                  buttonLabel = "Parcourir", placeholder = "Aucun fichier sélectionné"),
+        textInput("user_gene1_id", "ID du gène pour REM16", value = "LOC115699937"),
+        textInput("user_gene2_id", "ID du gène pour FT1", value = "LOC115696989"),
+        actionButton("analyze", "Analyser"),
+        hr(),
+        selectInput("column_selector", "Sélectionner un individu (colonne) :", choices = NULL),
+        textInput("search_column", "Ou entrer un nom d'individu (colonne) :"),
+        actionButton("search_column_button", "Chercher"),
+        width = 3
+      ),
+      mainPanel(
+        fluidRow(
+          column(3, offset = 9, selectInput("graph_choice", "Choisir le graphique :", choices = c("REM16", "FT1", "REM16+FT1"), selected = "REM16"))
+        ),
+        plotOutput("expressionPlot", height = "600px")
+      )
+    )
   ),
   
-  # Onglet pour afficher les résultats dans un tableau interactif
-  tabPanel("Tableau des résultats",
-           # Utilisation de la bibliothèque DT pour créer un tableau de données interactif
-           DT::dataTableOutput("result_table")
+  # Onglet pour afficher les résultats dans un tableau interactif avec icône de tableau
+  tabPanel(
+    HTML("<i class='fas fa-table'></i> Tableau des résultats"),
+    DT::dataTableOutput("result_table")
   )
 )
+
+
 
 
 # Serveur de l'application
