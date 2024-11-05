@@ -21,7 +21,7 @@ L'application requiert les éléments suivants pour fonctionner correctement :
 ## Résultats
 1. **Graphiques d'expression génique** : Boxplots interactifs pour les gènes `REM16` et `FT1`, permettant de visualiser les niveaux d'expression des échantillons comparés aux données de référence.
    a. L'expression du gène REM16 du génotype sélectionné (en noir) comparé aux boxplotx des données de référence.
-   rem16.png
+   ![Texte alternatif de l'image](images/rem16.png)
    b. L'expression du gène FT1 du génotype sélectionné (en noir) comparé aux boxplotx des données de référence.
    ft1.png
    c. L'expression des gènes REM16 et FT1 du génotype sélectionné (en noir) comparé aux boxplotx des données de référence coloré en fonction du gène.
@@ -36,16 +36,16 @@ L'application requiert les éléments suivants pour fonctionner correctement :
    - Utilisez le champ de téléversement pour charger un fichier CSV contenant les niveaux d'expression pour `REM16` et `FT1`.
    - Spécifiez les identifiants de gènes si différents des valeurs par défaut.
    - Cliquez sur "Analyser" pour afficher les boxplots et comparer vos échantillons avec les données de référence.
-       etape1.png
+       ![Texte alternatif de l'image](images/etape1.png)
 
 4. **Observation des données**
    - Sélectionnez le génotype à étudier (la première colonne par défaut). Vous pouvez sélectionner à partir de la liste déroulante ou simplement faire la recherche en entrant le nom de la colonne(génotype) suivit de la sélection du bouton chercher. La fonction recherche va dominer et actualiser la sélection par la liste. Si le nom sélectionné n'est pas dans la liste des noms des colonnes, un message d'erreur apparaîtra et annulera la recherche.
    - Sélectionnez un graphique spécifique (REM1, FT1, ou les deux) pour une visualisation personnalisée.
-  etape2.png
-  etape3.png
+       ![Texte alternatif de l'image](images/etape2.png)
+       ![Texte alternatif de l'image](images/etape3.png)
 
 6. **Interpréter les résultats** :
    - Consultez les prédictions de sexe dans l'onglet "Tableau des résultats". Les échantillons sont identifiés par leur sexe basé sur les niveaux d'expression de `REM16` et `FT1`.
-tableau_model.png
+       ![Texte alternatif de l'image](images/tableau_model.png)
 ## Notes supplémentaires
 - La taille des fichiers téléversés est limitée à 50 Mo.
