@@ -12,8 +12,10 @@ Ce script vise à :
 
 ### Données d'entrée
 L'application requiert les éléments suivants pour fonctionner correctement :
-- **Fichier CSV d'expression génique** : Fichier contenant les niveaux d'expression des gènes pour différents échantillons. **METTRE LE RESTE DE LA DÉFINITION DE L'AUTRE README**
-- ex_tab_csv.png
+- **Fichier CSV d'expression génique** :  Un fichier CSV contenant les données d'expression des gènes pour différents échantillons. Le fichier doit inclure une colonne nommée `X` avec les identifiants de gènes, tels que `LOC115699937` et `LOC115696989`, qui seront automatiquement renommés en **REM16** et **FT1**. Toutes les autres colonne représente l'identifiant d'un génotype.
+  
+![Texte alternatif de l'image](images/ex_tab_csv.png)
+
 - **Identifiants de gènes** : Par défaut `LOC115699937` pour `REM16` et `LOC115696989` pour `FT1`. Ils peuvent être personnalisés via l'interface.
   
 **Remarque** : Les identifiants de gènes sont utilisés pour renommer et standardiser les noms des gènes dans les graphiques et les prédictions.
