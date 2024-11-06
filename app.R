@@ -17,7 +17,6 @@ ref_data <- readRDS("data/2_Data_RNASeq_Cannabis_Sex.rds")  # Données d'express
 svm_model <- readRDS("modele/svm_model.rds")  # Modèle SVM pour prédire le sexe des plantes
 
 
-
 # Fonction pour préparer et transformer les données de référence
 prepare_reference_data <- function(data) {
   # Fonction helper pour transformer les données d'un gène
