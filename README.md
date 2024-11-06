@@ -25,6 +25,7 @@ L'application requiert les éléments suivants pour fonctionner correctement :
    - **REM16 ~ 10,5 et FT1 ~ exprimé** : Femelle
    - **REM16 ~ 8,75 et FT1 exprimé** : Mâle
    - **REM16 exprimé sans FT1** : Cas problématique à vérifier
+   
    a. L'expression du gène REM16 du génotype sélectionné (en noir) comparé aux boxplotx des données de référence.
    
    ![Texte alternatif de l'image](images/REM16.png)
