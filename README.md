@@ -54,7 +54,6 @@ L'application requiert les éléments suivants pour fonctionner correctement :
        - **REM16 ~ 10,5 et FT1 ~ exprimé** : Femelle
        - **REM16 ~ 8,75 et FT1 exprimé** : Mâle
        - **REM16 exprimé sans FT1** : Cas problématique à vérifier
-    
    - Sélectionnez un graphique spécifique (REM1, FT1, ou les deux) pour une visualisation personnalisée.
        ![Texte alternatif de l'image](images/etape2.png)
        ![Texte alternatif de l'image](images/etape3.png)
